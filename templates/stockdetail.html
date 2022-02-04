@@ -1,0 +1,78 @@
+{%extends "layout.html"%}
+{%block content%}
+<h1><a href="/">Stocks</a> <i class="angle double right icon"></i>
+    {{stock.name}}({{stock.symbol}}) </h1>
+<!-- TradingView Widget BEGIN -->
+<div class="tradingview-widget-container">
+    <div id="tradingview_5d8f0"></div>
+    <!-- <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/symbols/NASDAQ-AAPL/" rel="noopener"
+                                                 target="_blank"><span class="blue-text">AAPL Chart</span></a> by -->
+        <!-- TradingView -->
+    </div>
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <script type="text/javascript">
+        new TradingView.widget(
+        {
+        "autosize": true,
+        "symbol": "{{stock.exchange}}:{{stock.symbol}}",
+        "interval": "D",
+        "timezone": "Asia/Dubai",
+        "theme": "dark",
+        "style": "1",
+        "locale": "en",
+        "toolbar_bg": "#f1f3f6",
+        "enable_publishing": false,
+        "allow_symbol_change": true,
+        "calendar": true,
+        "studies": [
+        "ATR@tv-basicstudies",
+        "MASimple@tv-basicstudies"
+        ],
+        "container_id": "tradingview_5d8f0"
+    }
+        );
+
+    </script>
+</div>
+<!-- TradingView Widget END -->
+
+
+<form method='post' enctype="multipart/form-data" action="/apply_strategy">
+    <select name='strategy_id'>
+        {% for strategy in strategies%}
+            <option value="{{strategy.id}}">{{strategy.name}}</option>
+        {% endfor%}
+    </select>
+
+    <input type="text" name="stock_id" value="{{stock.id}}" />
+    <input type="submit" value="Apply Strategy"/>
+</form>
+<table class="ui striped table">
+    <thead>
+    <tr>
+        <th>Date</th>
+        <th>Open</th>
+        <th>High</th>
+        <th>Low</th>
+        <th>Close</th>
+        <th>Volume</th>
+
+    </tr>
+    </thead>
+    <tbody>
+    {%for bar in bars%}
+    <tr>
+
+        <td>{{bar.Date}}</td>
+        <td>{{bar.Open}}</td>
+        <td>{{bar.High}}</td>
+        <td>{{bar.Low}}</td>
+        <td>{{bar.Close}}</td>
+        <td>{{bar.Volume}}</td>
+
+    </tr>
+    {%endfor%}
+    </tbody>
+</table>
+
+{%endblock%}

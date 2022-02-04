@@ -1,0 +1,171 @@
+{%extends "layout.html"%}
+{%block content%}
+
+<div class="row">
+    <div class="sixteen wide column">
+        <div class="row">
+            <div class="column">
+                <h1 class="ui horizontal divider">Stock List</h1>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="eight wide column">
+        <form method='get' class="ui form">
+            <div class="inline fields">
+                <label for="stock_filter">Select Stocks</label>
+                <div class="field">
+                    <select name="stock_filter" class="ui selection dropdown" id="stock_filter">
+                        <option value="">All Stocks</option>
+                        <option {%if request.query_params.stock_filter=='new_closing_highs'%}selected="selected" {%endif%}
+                                value="new_closing_highs">New Closing Highs
+                        </option>
+                        <option {%if request.query_params.stock_filter=='new_closing_lows'%}selected="selected"
+                                {%endif%}value="new_closing_lows">New Closing Lows
+                        </option>
+                        <option {%if request.query_params.stock_filter=='rsi_overbought'%}selected="selected"
+                                {%endif%}value="rsi_overbought">RSI Overbought
+                        </option>
+                        <option {%if request.query_params.stock_filter=='rsi_oversold'%}selected="selected"
+                                {%endif%}value="rsi_oversold">RSI Oversold
+                        </option>
+                        <option {%if request.query_params.stock_filter=='above_sma20'%}selected="selected"
+                                {%endif%}value="above_sma20">Above SMA 20
+                        </option>
+                        <option {%if request.query_params.stock_filter=='below_sma20'%}selected="selected"
+                                {%endif%}value="below_sma20">Below SMA 20
+                        </option>
+                        <option {%if request.query_params.stock_filter=='trend_ema200'%}selected="selected"
+                                {%endif%}value="trend_ema200">Trend with EMA
+                        </option>
+                    </select>
+                </div>
+                <label for="script_filter">Select Script</label>
+                <div class="field">
+                    <select name="script_filter" class="ui selection dropdown" id="script_filter">
+                        <option value="">All Scripts</option>
+                        <option {%if request.query_params.script_filter=='stocks_only'%}selected="selected" {%endif%}
+                                value="stocks_only">Stocks Only
+                        </option>
+                        <option {%if request.query_params.script_filter=='snp_500_only'%}selected="selected"
+                                {%endif%}value="snp_500_only">SNP 500 Only
+                        </option>
+                        <option {%if request.query_params.script_filter=='forex_only'%}selected="selected"
+                                {%endif%}value="forex_only">Forex Only
+                        </option>
+                        <option {%if request.query_params.script_filter=='commodities_only'%}selected="selected"
+                                {%endif%}value="commodities_only">Commodities Only
+                        </option>
+                        <option {%if request.query_params.script_filter=='indices_only'%}selected="selected"
+                                {%endif%}value="indices_only">Indices Only
+                        </option>
+                        <option {%if request.query_params.script_filter=='crypto_only'%}selected="selected"
+                                {%endif%}value="crypto_only">Crypto Only
+                        </option>
+                    </select>
+                </div>
+                <div class="field"><input type='submit' class="ui button"/></div>
+            </div>
+        </form>
+    </div>
+    <div class="row">
+        <div class="eight wide column">
+
+        </div>
+        <div class="two wide column"></div>
+        <div class="six wide column">
+            <div class="ui right aligned grid">
+                <!-- <div class="eight wide column" style="text-align:right">
+                    <button id="refresh_prices" class="ui button"><i class="refresh icon"></i>Refresh Price</button>
+                </div> -->
+                <div class="eight wide column padded" style="text-align:right">
+                    <div class="ui label" id="last_updated">
+                        <i class="calendar icon"></i>Last Updated: 2022-01-18
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <table class="ui striped table">
+        <thead>
+        <tr>
+            <th>Special</th>
+            <th>Symbol</th>
+            <th>Name</th>
+            <th>DATE</th>
+            <th>PRICE</th>
+            <th>Volume</th>
+            <th>SMA 20</th>
+            <th>SMA 50</th>
+            <th>SMA 200</th>
+            <th>RSI 14</th>
+            <th>ATR</th>
+            <th>BUY</th>
+            <th>SELL</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for stock in stocks%}
+        <tr>
+            <td>
+                {{stock.Special}}
+            </td>
+            <td>
+                {{stock.symbol}}
+            </td>
+            <td>
+                <a href="/stock/{{ stock.symbol }}">{{stock.name}}</a>
+            </td>
+            <td>
+                {{indicators[stock.symbol].date}}
+            </td>
+            <td>
+                {{indicators[stock.symbol].close}}
+            </td>
+            <td>
+                {{indicators[stock.symbol].Volume}}
+            </td>
+            <td>
+                {{indicators[stock.symbol].sma_20}}
+            </td>
+            <td>
+                {{indicators[stock.symbol].sma_50}}
+            </td>
+            <td>
+                {{indicators[stock.symbol].sma_200}}
+            </td>
+            <td>
+                {{indicators[stock.symbol].rsi_14}}
+            </td>
+            <td>
+                {{indicators[stock.symbol].atr}}
+            </td>
+
+
+        </tr>
+        {%endfor%}
+        </tbody>
+    </table>
+
+    <!-- <script>
+        $(document).on('click','#refresh_prices',function(){
+            let that =$(this);
+            $.ajax({
+                url:'/refresh-prices',
+                update_type:'post',
+                dataType :'json',
+                beforeSend:function(){
+                    that.addClass('loading').prop('disabled',true);
+                },success:function(response){
+                    $("#last_updated").html(` <i class="calendar icon"></i>Last Updated: ${response.last_updated}`)
+                    that.hide()
+                },complete:function(){
+                    that.removeClass('loading').prop('disabled',false);
+                }
+            });
+        });
+
+    </script> -->
+    {%endblock%}
